@@ -19,7 +19,9 @@
 package com.simon1511.wearablespoof;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
+import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class MainHook implements IXposedHookLoadPackage {
@@ -27,5 +29,18 @@ public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("WearableSpoof: we're behind the scenes!! package name: " + lpparam.packageName);
+
+        if (lpparam.packageName.equals("com.samsung.android.app.watchmanager")) {
+            XposedBridge.log("WearableSpoof: Hooking into Watchmanager");
+            XposedHelpers.findAndHookMethod(
+                    "com.samsung.android.app.twatchmanager.util.HostManagerUtils",
+                    lpparam.classLoader,
+                    "isSamsungDevice", XC_MethodReplacement.returnConstant(Boolean.FALSE));
+
+            XposedHelpers.findAndHookMethod(
+                    "com.samsung.android.app.twatchmanager.util.HostManagerUtils",
+                    lpparam.classLoader,
+                    "isSamsungDeviceWithCustomBinary", XC_MethodReplacement.returnConstant(Boolean.FALSE));
+        }
     }
 }
