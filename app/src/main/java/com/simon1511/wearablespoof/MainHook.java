@@ -18,6 +18,8 @@
 
 package com.simon1511.wearablespoof;
 
+import android.os.Build;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
@@ -32,15 +34,22 @@ public class MainHook implements IXposedHookLoadPackage {
 
         if (lpparam.packageName.equals("com.samsung.android.app.watchmanager")) {
             XposedBridge.log("WearableSpoof: Hooking into Watchmanager");
-            XposedHelpers.findAndHookMethod(
-                    "com.samsung.android.app.twatchmanager.util.HostManagerUtils",
-                    lpparam.classLoader,
-                    "isSamsungDevice", XC_MethodReplacement.returnConstant(Boolean.FALSE));
 
-            XposedHelpers.findAndHookMethod(
-                    "com.samsung.android.app.twatchmanager.util.HostManagerUtils",
-                    lpparam.classLoader,
-                    "isSamsungDeviceWithCustomBinary", XC_MethodReplacement.returnConstant(Boolean.FALSE));
+            // ro.product.manufacturer
+            if (Build.MANUFACTURER.equals("samsung")) {
+                XposedHelpers.setStaticObjectField(Build.class, "MANUFACTURER", "google");
+            }
+
+            // ro.product.model
+            if (Build.MODEL.startsWith("SM-")) {
+                XposedHelpers.setStaticObjectField(Build.class, "MODEL", "Pixel 7 Pro");
+            }
+
+            // ro.build.fingerprint
+            if (Build.FINGERPRINT.contains("samsung")) {
+                XposedHelpers.setStaticObjectField(Build.class, "FINGERPRINT",
+                        "google/cheetah/cheetah:13/TQ2A.230505.002/9891397:user/release-keys");
+            }
         }
     }
 }
