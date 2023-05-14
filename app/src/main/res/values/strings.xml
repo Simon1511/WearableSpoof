@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">WearableSpoof</string>
-
     <string name="module_description">Lets you use the Samsung Wearable app and its plugins on Samsung phones running AOSP</string>
 </resources>
