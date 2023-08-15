@@ -21,42 +21,17 @@ package com.simon1511.wearablespoof;
 import android.os.Build;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
-import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class MainHook implements IXposedHookLoadPackage {
 
-    private static final String MANAGER_PACKAGE_NAME = "com.samsung.android.app.watchmanager";
-    private static final String BUDS_PLUS_PACKAGE_NAME = "com.samsung.accessory.popcornmgr";
-    private static final String BUDS_PRO_PACKAGE_NAME = "com.samsung.accessory.atticmgr";
-    private static final String BUDS2_PACKAGE_NAME = "com.samsung.accessory.berrymgr";
-    private static final String BUDS_LIVE_PACKAGE_NAME = "com.samsung.accessory.neobeanmgr";
-    private static final String WATCH4_PACKAGE_NAME = "com.samsung.android.waterplugin";
-    private static final String FIT2_PACKAGE_NAME = "com.samsung.android.neatplugin";
-    private static final String WATCH3_PACKAGE_NAME = "com.samsung.android.gearnplugin";
-    private static final String FIT_PACKAGE_NAME = "com.samsung.android.modenplugin";
-    private static final String WATCH_ACTIVE2_PACKAGE_NAME = "com.samsung.android.gearrplugin";
-    private static final String WATCH_ACTIVE_PACKAGE_NAME = "com.samsung.android.gearpplugin";
-    private static final String GEAR_S_PACKAGE_NAME = "com.samsung.android.gearoplugin";
-    private static final String WATCH5_PACKAGE_NAME = "com.samsung.android.heartplugin";
-    private static final String WATCH_PACKAGE_NAME = "com.samsung.android.geargplugin";
-    private static final String BUDS_MGR_PACKAGE_NAME = "com.samsung.accessory.fridaymgr";
-    private static final String ACCESSORY_SERVICE_PACKAGE_NAME = "com.samsung.accessory";
-
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("WearableSpoof: Started for: " + lpparam.packageName);
 
-        if (lpparam.packageName.equals(MANAGER_PACKAGE_NAME) || lpparam.packageName.equals(BUDS_PLUS_PACKAGE_NAME) ||
-                lpparam.packageName.equals(BUDS_PRO_PACKAGE_NAME) || lpparam.packageName.equals(BUDS2_PACKAGE_NAME) ||
-                lpparam.packageName.equals(BUDS_LIVE_PACKAGE_NAME) || lpparam.packageName.equals(WATCH4_PACKAGE_NAME) ||
-                lpparam.packageName.equals(FIT2_PACKAGE_NAME) || lpparam.packageName.equals(WATCH3_PACKAGE_NAME) ||
-                lpparam.packageName.equals(FIT_PACKAGE_NAME) || lpparam.packageName.equals(WATCH_ACTIVE2_PACKAGE_NAME) ||
-                lpparam.packageName.equals(WATCH_ACTIVE_PACKAGE_NAME) || lpparam.packageName.equals(GEAR_S_PACKAGE_NAME) ||
-                lpparam.packageName.equals(WATCH5_PACKAGE_NAME) || lpparam.packageName.equals(WATCH_PACKAGE_NAME) ||
-                lpparam.packageName.equals(BUDS_MGR_PACKAGE_NAME) || lpparam.packageName.equals(ACCESSORY_SERVICE_PACKAGE_NAME)) {
+        if (lpparam.packageName.startsWith("com.samsung") || lpparam.packageName.startsWith("com.sec")) {
             XposedBridge.log("WearableSpoof: Hooking into: " + lpparam.packageName);
 
             // ro.product.manufacturer
@@ -96,7 +71,7 @@ public class MainHook implements IXposedHookLoadPackage {
                         "google/cheetah/cheetah:13/TQ2A.230505.002/9891397:user/release-keys");
             }
         } else {
-            XposedBridge.log("WearableSpoof: Not a Samsung Wearable app");
+            XposedBridge.log("WearableSpoof: Not a Samsung app");
         }
     }
 }
