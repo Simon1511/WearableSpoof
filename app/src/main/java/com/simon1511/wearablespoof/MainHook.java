@@ -18,9 +18,11 @@
 
 package com.simon1511.wearablespoof;
 
+import android.app.admin.DevicePolicyManager;
 import android.os.Build;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
+import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
@@ -30,6 +32,22 @@ public class MainHook implements IXposedHookLoadPackage {
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         XposedBridge.log("WearableSpoof: Started for: " + lpparam.packageName);
+
+        XposedHelpers.findAndHookMethod("android.app.admin.DevicePolicyManager",
+                lpparam.classLoader, "getStorageEncryptionStatus", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                param.setResult(DevicePolicyManager.ENCRYPTION_STATUS_ACTIVE_PER_USER);
+            }
+        });
+
+        XposedHelpers.findAndHookMethod("android.os.storage.StorageManager",
+                lpparam.classLoader, "isEncrypted", new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        param.setResult(true);
+                    }
+                });
 
         if (lpparam.packageName.startsWith("com.samsung") || lpparam.packageName.startsWith("com.sec")) {
             XposedBridge.log("WearableSpoof: Hooking into: " + lpparam.packageName);
